@@ -5,6 +5,16 @@ const WHATSAPP_NUMBER = "5521999999999"; // formato: 55 + DDD + número, sem esp
 const WHATSAPP_MESSAGE = "Olá, Marcelo! Vi o site e gostaria de saber mais sobre suas obras.";
 const DISPLAY_PHONE = "(21) 99999-9999"; // como o telefone aparece na tela
 
+// Chave da Street View Static API do Google (opcional).
+// Sem ela, os cards usam o Street View incorporado (iframe), que já funciona.
+// Com ela, os cards passam a mostrar um "print" estático real (mais rápido e mais bonito).
+// Como conseguir uma chave gratuita:
+//   1. Acesse console.cloud.google.com e crie um projeto.
+//   2. Em "APIs e Serviços" > "Biblioteca", ative a "Street View Static API".
+//   3. Em "Credenciais", crie uma chave de API e cole abaixo.
+//   4. (Opcional, recomendado) Restrinja a chave por domínio/referenciador ao site.
+const GOOGLE_STREETVIEW_API_KEY = "";
+
 // ============================================
 // OBRAS — Recreio dos Bandeirantes
 // ============================================
@@ -75,8 +85,19 @@ async function geocodeAddress(endereco) {
   return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
 }
 
-function streetViewUrl(lat, lon) {
+function streetViewEmbedUrl(lat, lon) {
   return `https://maps.google.com/maps?layer=c&cbll=${lat},${lon}&cbp=11,0,0,0,0&output=svembed`;
+}
+
+function streetViewStaticUrl(lat, lon) {
+  const params = new URLSearchParams({
+    size: "640x400",
+    location: `${lat},${lon}`,
+    fov: "80",
+    source: "outdoor",
+    key: GOOGLE_STREETVIEW_API_KEY,
+  });
+  return `https://maps.googleapis.com/maps/api/streetview?${params.toString()}`;
 }
 
 function waLink(customMessage) {
@@ -135,13 +156,26 @@ function showStreetViewOnCard(index, lat, lon) {
   if (!visual) return;
   const media = document.createElement("div");
   media.className = "card-visual-media";
-  media.innerHTML = `
-    <iframe src="${streetViewUrl(lat, lon)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
-    <span class="card-visual-tag">Foto real via Google Street View</span>
-  `;
+
+  if (GOOGLE_STREETVIEW_API_KEY) {
+    // Com chave configurada: print estático real da Street View Static API.
+    media.innerHTML = `
+      <img src="${streetViewStaticUrl(lat, lon)}" alt="Fachada do imóvel via Google Street View" loading="lazy">
+      <span class="card-visual-tag">Foto real via Google Street View</span>
+    `;
+    const img = media.querySelector("img");
+    img.addEventListener("load", () => img.classList.add("is-loaded"));
+  } else {
+    // Sem chave: Street View incorporado (iframe), interativo.
+    media.innerHTML = `
+      <iframe src="${streetViewEmbedUrl(lat, lon)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <span class="card-visual-tag">Foto real via Google Street View</span>
+    `;
+    const iframe = media.querySelector("iframe");
+    iframe.addEventListener("load", () => iframe.classList.add("is-loaded"));
+  }
+
   visual.appendChild(media);
-  const iframe = media.querySelector("iframe");
-  iframe.addEventListener("load", () => iframe.classList.add("is-loaded"));
 }
 
 function setupFilters() {
