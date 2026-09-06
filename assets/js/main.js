@@ -41,6 +41,44 @@ const BUILDING_SHAPES = [
   `<svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="24" y="14" width="40" height="60"/><rect x="64" y="34" width="30" height="40"/><line x1="24" y1="24" x2="64" y2="24"/><line x1="24" y1="34" x2="64" y2="34"/><line x1="24" y1="44" x2="64" y2="44"/><line x1="24" y1="54" x2="64" y2="54"/><line x1="24" y1="64" x2="64" y2="64"/><line x1="64" y1="44" x2="94" y2="44"/><line x1="64" y1="54" x2="94" y2="54"/><line x1="64" y1="64" x2="94" y2="64"/></svg>`,
 ];
 
+const GEO_CACHE_KEY = "mc_obras_geocode_v1";
+const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
+const GEOCODE_DELAY_MS = 1100; // respeita o limite de 1 req/s da política de uso do Nominatim
+
+function loadGeoCache() {
+  try {
+    return JSON.parse(localStorage.getItem(GEO_CACHE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveGeoCache(cache) {
+  try {
+    localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(cache));
+  } catch (e) {
+    /* localStorage indisponível — segue sem cache */
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function geocodeAddress(endereco) {
+  const query = `${endereco}, ${BAIRRO}, Brasil`;
+  const url = `${NOMINATIM_URL}?format=json&limit=1&countrycodes=br&q=${encodeURIComponent(query)}`;
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!res.ok) throw new Error("geocode failed");
+  const data = await res.json();
+  if (!data.length) throw new Error("sem resultado");
+  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+}
+
+function streetViewUrl(lat, lon) {
+  return `https://maps.google.com/maps?layer=c&cbll=${lat},${lon}&cbp=11,0,0,0,0&output=svembed`;
+}
+
 function waLink(customMessage) {
   const msg = encodeURIComponent(customMessage || WHATSAPP_MESSAGE);
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
@@ -49,6 +87,15 @@ function waLink(customMessage) {
 function mapsLink(endereco) {
   const q = encodeURIComponent(`${endereco}, ${BAIRRO}`);
   return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+
+const resolvedCoords = {};
+
+function reapplyStreetViews() {
+  Object.keys(resolvedCoords).forEach((index) => {
+    const { lat, lon } = resolvedCoords[index];
+    showStreetViewOnCard(index, lat, lon);
+  });
 }
 
 function renderPortfolio(filter = "all") {
@@ -68,7 +115,7 @@ function renderPortfolio(filter = "all") {
     const shape = BUILDING_SHAPES[i % BUILDING_SHAPES.length];
 
     card.innerHTML = `
-      <div class="card-visual">
+      <div class="card-visual" id="card-visual-${i}">
         <span class="card-index">OBRA ${String(i + 1).padStart(2, "0")}</span>
         <span class="card-badge ${badgeClass}">${badgeLabel}</span>
         ${shape}
@@ -83,6 +130,20 @@ function renderPortfolio(filter = "all") {
   });
 }
 
+function showStreetViewOnCard(index, lat, lon) {
+  const visual = document.getElementById(`card-visual-${index}`);
+  if (!visual) return;
+  const media = document.createElement("div");
+  media.className = "card-visual-media";
+  media.innerHTML = `
+    <iframe src="${streetViewUrl(lat, lon)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+    <span class="card-visual-tag">Foto real via Google Street View</span>
+  `;
+  visual.appendChild(media);
+  const iframe = media.querySelector("iframe");
+  iframe.addEventListener("load", () => iframe.classList.add("is-loaded"));
+}
+
 function setupFilters() {
   const buttons = document.querySelectorAll(".filter-btn");
   buttons.forEach((btn) => {
@@ -90,6 +151,7 @@ function setupFilters() {
       buttons.forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
       renderPortfolio(btn.dataset.filter);
+      reapplyStreetViews();
     });
   });
 }
@@ -101,6 +163,89 @@ function setupNav() {
   nav.querySelectorAll("a").forEach((a) =>
     a.addEventListener("click", () => nav.classList.remove("is-open"))
   );
+}
+
+let map = null;
+const mapBounds = [];
+
+function initMap() {
+  if (typeof L === "undefined") return null;
+  map = L.map("map-obras", { scrollWheelZoom: false }).setView([-23.017, -43.466], 14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+  const mapEl = document.getElementById("map-obras");
+  mapEl.addEventListener("click", () => map.scrollWheelZoom.enable());
+  mapEl.addEventListener("mouseleave", () => map.scrollWheelZoom.disable());
+  return map;
+}
+
+function addMarkerToMap(obra, index, lat, lon) {
+  if (!map) return;
+  const isDone = obra.status === "done";
+  const marker = L.circleMarker([lat, lon], {
+    radius: 9,
+    weight: 2,
+    color: "#0e1a26",
+    fillColor: isDone ? "#1fa855" : "#c8802a",
+    fillOpacity: 0.9,
+  }).addTo(map);
+
+  marker.bindPopup(`
+    <span class="map-popup-title">Obra ${String(index + 1).padStart(2, "0")} — ${obra.endereco}</span>
+    <span class="map-popup-status">${isDone ? "Concluída" : "Em construção"}</span><br>
+    <a class="map-popup-link" href="${mapsLink(obra.endereco)}" target="_blank" rel="noopener">Abrir no Google Maps →</a>
+  `);
+
+  mapBounds.push([lat, lon]);
+  if (mapBounds.length === 1) {
+    map.setView([lat, lon], 15);
+  } else {
+    map.fitBounds(mapBounds, { padding: [30, 30], maxZoom: 16 });
+  }
+}
+
+async function geocodeAll() {
+  const statusEl = document.getElementById("mapa-status");
+  const cache = loadGeoCache();
+  let resolved = 0;
+  let failed = 0;
+
+  for (let i = 0; i < OBRAS.length; i++) {
+    const obra = OBRAS[i];
+    let coords = cache[obra.endereco];
+
+    if (!coords) {
+      try {
+        coords = await geocodeAddress(obra.endereco);
+        cache[obra.endereco] = coords;
+        saveGeoCache(cache);
+        await sleep(GEOCODE_DELAY_MS);
+      } catch (e) {
+        failed++;
+        if (statusEl) {
+          statusEl.textContent = `Localizando obras no mapa… (${resolved + failed}/${OBRAS.length})`;
+        }
+        continue;
+      }
+    }
+
+    resolved++;
+    resolvedCoords[i] = coords;
+    addMarkerToMap(obra, i, coords.lat, coords.lon);
+    showStreetViewOnCard(i, coords.lat, coords.lon);
+
+    if (statusEl) {
+      statusEl.textContent = `Localizando obras no mapa… (${resolved + failed}/${OBRAS.length})`;
+    }
+  }
+
+  if (statusEl) {
+    statusEl.textContent = failed
+      ? `${resolved} de ${OBRAS.length} obras localizadas no mapa.`
+      : `${resolved} obras localizadas no mapa.`;
+  }
 }
 
 function setupWhatsappLinks() {
@@ -116,4 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFilters();
   setupNav();
   setupWhatsappLinks();
+  initMap();
+  geocodeAll();
 });
