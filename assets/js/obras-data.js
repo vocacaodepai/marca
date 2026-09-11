@@ -1,0 +1,36 @@
+// ============================================
+// OBRAS — Recreio dos Bandeirantes
+// ============================================
+// Fonte única de dados, usada tanto pela página inicial (index.html)
+// quanto pela página de detalhes de cada obra (obra.html).
+//
+// lat/lng: geocodificados com a Google Geocoding API (precisão "ROOFTOP"
+// na maioria dos casos).
+// foto/galeria: imagens reais baixadas da Google Street View Static API e
+// salvas localmente em assets/img/obras/. foto=null quando não há
+// cobertura oficial do Google Street View naquele endereço — nesse caso a
+// página usa a ilustração de blueprint como reserva.
+const OBRAS = [
+  { id: "01", endereco: "Av. Genaro de Carvalho, 2350", status: "done", lat: -23.0184499, lng: -43.4674962, foto: "assets/img/obras/obra-01.jpg", galeria: ["assets/img/obras/obra-01.jpg", "assets/img/obras/obra-01b.jpg", "assets/img/obras/obra-01c.jpg"] },
+  { id: "02", endereco: "Rua Joaquim da Silveira, 265", status: "done", lat: -23.0200147, lng: -43.4691939, foto: null, galeria: [] },
+  { id: "03", endereco: "Rua Clóvis Salgado, 85", status: "done", lat: -23.022892, lng: -43.4638508, foto: "assets/img/obras/obra-03.jpg", galeria: ["assets/img/obras/obra-03.jpg", "assets/img/obras/obra-03b.jpg", "assets/img/obras/obra-03c.jpg"] },
+  { id: "04", endereco: "Rua Joaquim da Silveira, 251", status: "done", lat: -23.0202387, lng: -43.4690059, foto: "assets/img/obras/obra-04.jpg", galeria: ["assets/img/obras/obra-04.jpg", "assets/img/obras/obra-04b.jpg", "assets/img/obras/obra-04c.jpg"] },
+  { id: "05", endereco: "Rua Joaquim Moreira Neves, 288", status: "done", lat: -23.0212518, lng: -43.4668122, foto: "assets/img/obras/obra-05.jpg", galeria: ["assets/img/obras/obra-05.jpg", "assets/img/obras/obra-05b.jpg", "assets/img/obras/obra-05c.jpg"] },
+  { id: "06", endereco: "Rua Joaquim Moreira Neves, 375", status: "done", lat: -23.0210361, lng: -43.4669178, foto: "assets/img/obras/obra-06.jpg", galeria: ["assets/img/obras/obra-06.jpg", "assets/img/obras/obra-06b.jpg", "assets/img/obras/obra-06c.jpg"] },
+  { id: "07", endereco: "Rua Professora Souza Leão, 90", status: "done", lat: -23.0232323, lng: -43.4556574, foto: "assets/img/obras/obra-07.jpg", galeria: ["assets/img/obras/obra-07.jpg", "assets/img/obras/obra-07b.jpg", "assets/img/obras/obra-07c.jpg"] },
+  { id: "08", endereco: "Av. Lúcio Costa, 16730", status: "done", lat: -23.0252049, lng: -43.4590624, foto: "assets/img/obras/obra-08.jpg", galeria: ["assets/img/obras/obra-08.jpg", "assets/img/obras/obra-08b.jpg", "assets/img/obras/obra-08c.jpg"] },
+  { id: "09", endereco: "Rua Demósthenes Madureira de Pinho, 221", status: "done", lat: -23.0244165, lng: -43.4595358, foto: "assets/img/obras/obra-09.jpg", galeria: ["assets/img/obras/obra-09.jpg", "assets/img/obras/obra-09b.jpg", "assets/img/obras/obra-09c.jpg"] },
+  { id: "10", endereco: "Av. Genaro de Carvalho, 2307", status: "done", lat: -23.0188952, lng: -43.4672298, foto: "assets/img/obras/obra-10.jpg", galeria: ["assets/img/obras/obra-10.jpg", "assets/img/obras/obra-10b.jpg", "assets/img/obras/obra-10c.jpg"] },
+  { id: "11", endereco: "Rua Rabino Henrique Lemle, 357", status: "done", lat: -23.0169051, lng: -43.4528878, foto: "assets/img/obras/obra-11.jpg", galeria: ["assets/img/obras/obra-11.jpg", "assets/img/obras/obra-11b.jpg", "assets/img/obras/obra-11c.jpg"] },
+  { id: "12", endereco: "Rua Mário Faustino, 345", status: "done", lat: -23.0178404, lng: -43.462147, foto: "assets/img/obras/obra-12.jpg", galeria: ["assets/img/obras/obra-12.jpg", "assets/img/obras/obra-12b.jpg", "assets/img/obras/obra-12c.jpg"] },
+  { id: "13", endereco: "Av. Genaro de Carvalho, 975", status: "done", lat: -23.0156244, lng: -43.454711, foto: "assets/img/obras/obra-13.jpg", galeria: ["assets/img/obras/obra-13.jpg", "assets/img/obras/obra-13b.jpg", "assets/img/obras/obra-13c.jpg"] },
+  { id: "14", endereco: "Rua Jorge Emílio Fontenelle, 873", status: "done", lat: -23.0148888, lng: -43.4546019, foto: "assets/img/obras/obra-14.jpg", galeria: ["assets/img/obras/obra-14.jpg", "assets/img/obras/obra-14b.jpg", "assets/img/obras/obra-14c.jpg"] },
+  { id: "15", endereco: "Av. Jarbas de Carvalho, 835", status: "done", lat: -23.0238425, lng: -43.4749859, foto: "assets/img/obras/obra-15.jpg", galeria: ["assets/img/obras/obra-15.jpg", "assets/img/obras/obra-15b.jpg", "assets/img/obras/obra-15c.jpg"] },
+  { id: "16", endereco: "Av. Genaro de Carvalho, 3842", status: "progress", lat: -23.0221555, lng: -43.4815884, foto: "assets/img/obras/obra-16.jpg", galeria: ["assets/img/obras/obra-16.jpg", "assets/img/obras/obra-16b.jpg", "assets/img/obras/obra-16c.jpg"] },
+  { id: "17", endereco: "Rua Desembargador Paulo Alonso, 282", status: "progress", lat: -23.0205181, lng: -43.4811422, foto: "assets/img/obras/obra-17.jpg", galeria: ["assets/img/obras/obra-17.jpg", "assets/img/obras/obra-17b.jpg", "assets/img/obras/obra-17c.jpg"] },
+  { id: "18", endereco: "Rua Desembargador Paulo Alonso, 619", status: "done", lat: -23.0185352, lng: -43.4768845, foto: "assets/img/obras/obra-18.jpg", galeria: ["assets/img/obras/obra-18.jpg", "assets/img/obras/obra-18b.jpg", "assets/img/obras/obra-18c.jpg"] },
+  { id: "19", endereco: "Rua Ministro Aliomar Baleeiro, 111", status: "done", lat: -23.0192192, lng: -43.4797893, foto: "assets/img/obras/obra-19.jpg", galeria: ["assets/img/obras/obra-19.jpg", "assets/img/obras/obra-19b.jpg", "assets/img/obras/obra-19c.jpg"] },
+  { id: "20", endereco: "Rua São Francisco de Assis, 223", status: "done", lat: -23.019775, lng: -43.4755258, foto: "assets/img/obras/obra-20.jpg", galeria: ["assets/img/obras/obra-20.jpg", "assets/img/obras/obra-20b.jpg", "assets/img/obras/obra-20c.jpg"] },
+];
+
+const BAIRRO = "Recreio dos Bandeirantes, Rio de Janeiro - RJ";
