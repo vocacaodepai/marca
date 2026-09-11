@@ -9,33 +9,32 @@ Edite `assets/js/main.js`:
 - `WHATSAPP_NUMBER`: número real no formato `55` + DDD + número, só dígitos (ex: `5521987654321`).
 - `WHATSAPP_MESSAGE`: mensagem padrão que abre no WhatsApp.
 - `DISPLAY_PHONE`: como o telefone aparece escrito na seção de contato.
-- `OBRAS`: lista de endereços do portfólio (endereço + status `done`/`progress`).
+- `OBRAS`: lista das obras do portfólio — endereço, status (`done`/`progress`), coordenadas (`lat`/`lng`) e caminho da foto (`foto`).
 
 ## Mapa e fotos reais das obras
 
-O site geocodifica os endereços do portfólio no navegador (Nominatim/OpenStreetMap) para:
+Cada obra já vem com **coordenadas exatas** (geocodificadas uma única vez com a Google Geocoding API, a maioria com precisão "ROOFTOP") e uma **foto real da fachada** baixada da Google Street View Static API e salva localmente em `assets/img/obras/`. Isso é usado para:
 
-1. Plotar cada obra num mapa interativo com zoom (seção "Mapa").
-2. Mostrar a fachada real de cada endereço via Google Street View nos cards do portfólio.
+1. Plotar cada obra num mapa interativo com zoom (seção "Mapa", via Leaflet + OpenStreetMap).
+2. Mostrar a foto real de cada endereço nos cards do portfólio.
 
-Por padrão, a foto do Street View aparece como um **iframe incorporado** (funciona sem nenhuma configuração extra). Se quiser um **print estático real** (imagem `.jpg`, carrega mais rápido, fica mais parecido com uma foto de verdade):
+Como os dados já estão prontos no código, o site carrega instantaneamente — não depende de nenhuma chamada externa em tempo real, e nenhuma chave de API fica exposta no site publicado.
 
-1. Acesse [console.cloud.google.com](https://console.cloud.google.com), crie um projeto (é grátis).
-2. Em **APIs e Serviços → Biblioteca**, ative a **Street View Static API**.
-3. Em **Credenciais**, crie uma chave de API.
-4. (Recomendado) Restrinja a chave por domínio, para que só o seu site possa usá-la.
-5. Cole a chave em `assets/js/main.js`, na constante `GOOGLE_STREETVIEW_API_KEY`.
+Uma obra (`Rua Joaquim da Silveira, 265`) não tem `foto` (fica `null`) porque não há cobertura oficial do Google Street View bem naquele ponto — o card usa a ilustração de blueprint como reserva automaticamente. O mesmo acontece com qualquer obra futura sem foto.
 
-Assim que a chave for adicionada, os cards passam a usar o print estático automaticamente — não precisa mexer em mais nada.
+### Gerando fotos novas (se adicionar mais obras)
 
-Se algum endereço não tiver cobertura do Street View, ou enquanto a localização ainda está sendo carregada, o card mostra a ilustração de blueprint como reserva.
+Se adicionar novas obras à lista, para gerar a foto e as coordenadas:
+
+1. Crie uma chave gratuita no [Google Cloud Console](https://console.cloud.google.com) com **Geocoding API** e **Street View Static API** ativadas (sem restrição de referenciador, senão a Geocoding API recusa chamadas de servidor).
+2. Geocodifique o endereço: `https://maps.googleapis.com/maps/api/geocode/json?address=SEU_ENDERECO&key=SUA_CHAVE` → pegue `lat`/`lng` do resultado.
+3. Confirme que existe cobertura oficial (`"copyright":"© Google"`, não de um contribuidor) em: `https://maps.googleapis.com/maps/api/streetview/metadata?location=LAT,LNG&radius=50&source=outdoor&key=SUA_CHAVE`
+4. Baixe a foto: `https://maps.googleapis.com/maps/api/streetview?size=640x480&location=LAT,LNG&fov=60&pitch=15&source=outdoor&key=SUA_CHAVE` → salve em `assets/img/obras/obra-XX.jpg`.
+5. Adicione a entrada em `OBRAS` com `lat`, `lng` e `foto`.
 
 ### Fotos profissionais (opcional)
 
-Se no futuro vocês tirarem fotos profissionais das obras, é possível usá-las no lugar do Street View:
-
-1. Coloque as imagens em `assets/img/obras/` (ex: `obra-01.jpg`).
-2. Em `assets/js/main.js`, na função `renderPortfolio`, troque o SVG por uma tag `<img src="assets/img/obras/obra-XX.jpg" alt="...">` dentro de `.card-visual`.
+Se no futuro vocês tirarem fotos profissionais das obras, é só substituir o arquivo em `assets/img/obras/obra-XX.jpg` pela foto nova (mesmo nome, mesmo lugar) — não precisa mexer no código.
 
 ## Como visualizar localmente
 
