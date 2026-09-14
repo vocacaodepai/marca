@@ -160,6 +160,10 @@ h1, h2, h3 {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .logo-crea { display: none; }
 }
 
 .nav { display: flex; gap: 30px; }
