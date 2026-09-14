@@ -188,9 +188,22 @@ h1, h2, h3 {
   overflow: hidden;
   background: var(--concrete);
 }
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: #737373;
+  background-image:
+    linear-gradient(180deg, rgba(243,241,236,0.55) 0%, rgba(243,241,236,0.97) 90%),
+    url("https://images.unsplash.com/photo-1777470567404-a9479ad7fd24?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1800");
+  background-size: cover;
+  background-position: center 30%;
+  filter: grayscale(0.6) contrast(1.05);
+}
 .hero-grid {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background-image:
     linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
@@ -198,7 +211,17 @@ h1, h2, h3 {
   opacity: 0.5;
   mask-image: linear-gradient(to bottom, black, transparent 85%);
 }
-.hero-inner { position: relative; }
+.hero-inner { position: relative; z-index: 2; }
+.hero-photo-credit {
+  position: absolute;
+  bottom: 14px;
+  right: 20px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -290,11 +313,29 @@ h1, h2, h3 {
 .sobre-list strong { color: var(--text); }
 
 .sobre-figure {
-  display: flex;
-  justify-content: center;
-  color: var(--steel);
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background-color: #737373;
 }
-.blueprint-figure { width: 100%; max-width: 260px; }
+.sobre-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.15);
+}
+.sobre-figure-credit {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.75);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
 
 /* ---------- Portfolio ---------- */
 .portfolio { padding: 100px 0; background: var(--concrete-2); }
@@ -652,7 +693,7 @@ h1, h2, h3 {
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .sobre-inner { grid-template-columns: 1fr; }
-  .sobre-figure { order: -1; max-width: 200px; margin: 0 auto; }
+  .sobre-figure { order: -1; max-width: 320px; margin: 0 auto; }
 }
 
 @media (max-width: 720px) {
