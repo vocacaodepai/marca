@@ -1,8 +1,8 @@
 // ============================================
 // CONFIGURAÇÃO — mesmos dados de contato do main.js
 // ============================================
-const WHATSAPP_NUMBER = "5521999999999"; // formato: 55 + DDD + número, sem espaços/símbolos
-const DISPLAY_PHONE = "(21) 99999-9999";
+const WHATSAPP_NUMBER = "5521970073346"; // formato: 55 + DDD + número, sem espaços/símbolos
+const DISPLAY_PHONE = "(21) 97007-3346";
 
 const BUILDING_PLACEHOLDER_LARGE = `<svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1"><rect x="14" y="24" width="34" height="50"/><rect x="54" y="10" width="30" height="64"/><rect x="90" y="34" width="20" height="40"/><line x1="14" y1="34" x2="48" y2="34"/><line x1="14" y1="44" x2="48" y2="44"/><line x1="14" y1="54" x2="48" y2="54"/><line x1="14" y1="64" x2="48" y2="64"/><line x1="54" y1="20" x2="84" y2="20"/><line x1="54" y1="32" x2="84" y2="32"/><line x1="54" y1="44" x2="84" y2="44"/><line x1="54" y1="56" x2="84" y2="56"/></svg>`;
 

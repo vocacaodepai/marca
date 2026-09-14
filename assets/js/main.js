@@ -1,9 +1,9 @@
 // ============================================
 // CONFIGURAÇÃO — edite aqui os dados de contato
 // ============================================
-const WHATSAPP_NUMBER = "5521999999999"; // formato: 55 + DDD + número, sem espaços/símbolos
+const WHATSAPP_NUMBER = "5521970073346"; // formato: 55 + DDD + número, sem espaços/símbolos
 const WHATSAPP_MESSAGE = "Olá, Marcelo! Vi o site e gostaria de saber mais sobre suas obras.";
-const DISPLAY_PHONE = "(21) 99999-9999"; // como o telefone aparece na tela
+const DISPLAY_PHONE = "(21) 97007-3346"; // como o telefone aparece na tela
 
 // OBRAS e BAIRRO vêm de assets/js/obras-data.js (carregado antes deste arquivo)
 
