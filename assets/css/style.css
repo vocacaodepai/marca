@@ -154,9 +154,11 @@ h1, h2, h3 {
   text-transform: uppercase;
   color: var(--text-muted);
   white-space: nowrap;
+  line-height: 1.35;
 }
-@media (max-width: 900px) {
-  .logo-crea { display: none; }
+.logo-crea {
+  font-size: 0.6rem;
+  opacity: 0.85;
 }
 
 .nav { display: flex; gap: 30px; }
