@@ -26,6 +26,53 @@ function getObraFromUrl() {
   return OBRAS.find((o) => o.id === id) || null;
 }
 
+// Composição típica das unidades nos empreendimentos da MARCA — padrão
+// descrito pelo próprio engenheiro para a maioria das obras entre 1994 e
+// 2018. É um texto geral (não específico desta obra); os dados exatos de
+// cada empreendimento ficam na ficha técnica abaixo, confirmados um a um.
+const FICHA_PADRAO_TEXTO =
+  "Como a maioria dos empreendimentos assinados por Marcelo Carvalho (engenharia e construção) e Ana Lúcia Carvalho (arquitetura) no Recreio dos Bandeirantes, esta obra segue o padrão adotado pela dupla entre 1994 e 2018: prédios de 4 a 5 pavimentos — variando conforme a existência de subsolo —, com unidades de sala, varanda, 2 quartos sendo 1 suíte, banheiro social, dependência completa de empregada, cozinha e área de serviço. Quando há cobertura, ela costuma trazer terraço com piscina privativa, 3 quartos sendo 2 suítes e dependência de empregada.";
+
+function fichaValor(valor, unidade = "") {
+  if (valor === null || valor === undefined || valor === "") {
+    return `<span class="ficha-pendente">A confirmar</span>`;
+  }
+  return `${valor}${unidade}`;
+}
+
+function renderFichaTecnica(obra) {
+  const f = obra.ficha || {};
+  const subsolo = f.subsolo === true ? "Sim" : f.subsolo === false ? "Não" : null;
+
+  const linhas = [
+    ["Ano de conclusão", fichaValor(f.ano)],
+    ["Arquitetura", "Ana Lúcia Carvalho"],
+    ["Engenharia e construção", "Marcelo Carvalho — CREA/RJ 861048483/D"],
+    ["Pavimentos", fichaValor(f.pavimentos)],
+    ["Subsolo", fichaValor(subsolo)],
+    ["Vagas de garagem", fichaValor(f.vagas)],
+    ["Unidades por pavimento tipo", fichaValor(f.unidades)],
+    ["Cobertura", fichaValor(f.cobertura)],
+  ];
+
+  const linhasHtml = linhas
+    .map(([label, valor]) => `<div class="ficha-item"><span class="ficha-label">${label}</span><span class="ficha-valor">${valor}</span></div>`)
+    .join("");
+
+  return `
+    <div class="obra-ficha-section">
+      <h2>Ficha técnica</h2>
+      <p class="ficha-padrao">${FICHA_PADRAO_TEXTO}</p>
+      <div class="ficha-grid">${linhasHtml}</div>
+      <p class="ficha-nota">
+        Alguns dados desta obra específica ainda estão sendo confirmados com o engenheiro.
+        Se você mora ou conhece detalhes deste empreendimento, ajude a completar esta ficha
+        <a href="${waLink(obra.endereco)}" target="_blank" rel="noopener">pelo WhatsApp</a>.
+      </p>
+    </div>
+  `;
+}
+
 function renderNotFound() {
   document.getElementById("obra-content").innerHTML = `
     <div class="obra-not-found">
@@ -113,6 +160,8 @@ function renderObra(obra) {
         <p class="obra-phone">${DISPLAY_PHONE}</p>
       </div>
     </div>
+
+    ${renderFichaTecnica(obra)}
 
     <div class="obra-map-section">
       <h2>Localização</h2>

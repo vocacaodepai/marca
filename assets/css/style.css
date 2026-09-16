@@ -343,6 +343,57 @@ h1, h2, h3 {
   text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
+/* ---------- História ---------- */
+.historia { padding: 100px 0; background: var(--white); }
+.historia h2 {
+  font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+  color: var(--navy);
+  max-width: 20ch;
+}
+.historia-intro {
+  color: var(--text-muted);
+  max-width: 68ch;
+  font-size: 1.05rem;
+  margin-bottom: 48px;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 800px;
+}
+.timeline-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 28px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+}
+.timeline-item:last-child { border-bottom: 1px solid var(--line); }
+.timeline-year {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.timeline-body h3 {
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin: 0 0 8px;
+}
+.timeline-body p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 62ch;
+}
+
+@media (max-width: 560px) {
+  .timeline-item { grid-template-columns: 1fr; gap: 8px; }
+}
+
 /* ---------- Portfolio ---------- */
 .portfolio { padding: 100px 0; background: var(--concrete-2); }
 .portfolio h2 {
@@ -840,6 +891,61 @@ h1, h2, h3 {
 }
 .obra-whatsapp-btn { margin-top: 0; width: 100%; justify-content: center; }
 .obra-phone { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+
+.obra-ficha-section {
+  padding-bottom: 40px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+}
+.obra-ficha-section h2 {
+  font-size: 1.2rem;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+.ficha-padrao {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 74ch;
+  margin-bottom: 28px;
+}
+.ficha-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px 32px;
+  background: var(--concrete);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+}
+.ficha-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ficha-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.ficha-valor {
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+}
+.ficha-pendente {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 400;
+  border-bottom: 1px dashed var(--accent);
+}
+.ficha-nota {
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.ficha-nota a { color: var(--accent-2); font-weight: 600; }
 
 .obra-map-section h2 {
   font-size: 1.2rem;
